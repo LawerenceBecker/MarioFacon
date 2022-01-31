@@ -7,7 +7,7 @@ class Game():
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode((1280,720))
-        pg.display.set_caption('MarioStile')
+        pg.display.set_caption('Game about a bunny')
         self.clock = pg.time.Clock()
 
         self.level = levelTest.Level()
@@ -19,7 +19,7 @@ class Game():
                     pg.QUIT
                     sys.exit()
 
-            self.screen.fill('white')
+            self.screen.fill('black')
             self.level.run()
             pg.display.update()
             self.clock.tick(60)
