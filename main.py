@@ -1,6 +1,7 @@
 import pygame as pg
 import sys
 
+from levels import levelTest
 
 class Game():
     def __init__(self):
@@ -9,6 +10,8 @@ class Game():
         pg.display.set_caption('MarioStile')
         self.clock = pg.time.Clock()
 
+        self.level = levelTest.Level()
+
     def run(self):
         while True:
             for event in pg.event.get():
@@ -16,7 +19,8 @@ class Game():
                     pg.QUIT
                     sys.exit()
 
-            self.screen.fill('black')
+            self.screen.fill('white')
+            self.level.run()
             pg.display.update()
             self.clock.tick(60)
 
