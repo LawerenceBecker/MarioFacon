@@ -1,7 +1,7 @@
 import pygame as pg
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, pos, groups, spriteObjects):
+    def __init__(self, pos, groups, spriteObjects, pickupSprites):
         super().__init__(groups)
 
         self.image = pg.image.load('assets/Player.png').convert_alpha()
@@ -9,6 +9,7 @@ class Player(pg.sprite.Sprite):
         self.hitbox = pg.Rect(self.rect.x+4, self.rect.bottom-42, 52, 22)
 
         self.spriteObjects = spriteObjects
+        self.pickupSprites = pickupSprites
 
         self.direction = pg.math.Vector2()
         self.speed = 5
@@ -57,6 +58,10 @@ class Player(pg.sprite.Sprite):
                         self.hitbox.bottom = sprite.hitbox.top
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+
+        for item in self.pickupSprites:
+            if item.hitbox.colliderect(self.hitbox):
+                print('E')
 
     def update(self):
         self.input()

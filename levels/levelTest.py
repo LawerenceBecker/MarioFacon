@@ -10,15 +10,16 @@ class Level():
 
         self.display_surface = pg.display.get_surface()
 
+        self.pickupSprites = pg.sprite.Group()
         self.sprites = YSortCameraGroup()
         self.objectSprites = pg.sprite.Group()
 
-        self.player = Player((64,64), [self.sprites], self.objectSprites)
+        self.player = Player((64,64), [self.sprites], self.objectSprites, self.pickupSprites)
         Tile((196, 196), [self.sprites,self.objectSprites])
         Tile((260, 196), [self.sprites,self.objectSprites])
         Tile((324, 196), [self.sprites,self.objectSprites])
 
-        PickUpItem((260, 260), [self.sprites,self.objectSprites])
+        PickUpItem((260, 260), [self.sprites,self.pickupSprites,self.objectSprites])
 
     def run(self):
         
