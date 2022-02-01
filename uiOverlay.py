@@ -2,6 +2,24 @@ import pygame as pg
 
 class UiOverlay():
 
+    class InputOverlay(pg.sprite.Sprite):
+        def __init__(self, prompt, group):
+            super().__init__(group)
+            display_surface = pg.display.get_surface()
+
+            x = display_surface.get_size()[0] // 2
+            y = display_surface.get_size()[1] // 2
+            
+            self.image = pg.Surface((170,24))
+            self.rect = self.image.get_rect(topleft = (x+16, y-36))
+
+            font = pg.font.Font(None, 30)
+            promptText = font.render(f'E   {prompt}' , True , (255,255,255))
+
+            self.image.blit(promptText, [4, 2])
+
+
+
     class GainItem(pg.sprite.Sprite):
         itemList = []
 
@@ -27,7 +45,7 @@ class UiOverlay():
 
             font = pg.font.Font(None, 30)
 
-            itemImage = item.image
+            itemImage = item.icon
             itemNameText = font.render(f'You got 1x {item.name}' , True , (255,255,255))
 
             self.image.blit(itemImage, [0, 2])

@@ -54,6 +54,9 @@ class Player(pg.sprite.Sprite):
                     item.kill()
 
                     self.overlayActive = False
+                    for uiElem in self.playerUiSprites:
+                            if isinstance(uiElem, UiOverlay.InputOverlay):
+                                uiElem.kill()
 
     def move(self, speed):
         if self.direction.magnitude() != 0:
@@ -82,6 +85,18 @@ class Player(pg.sprite.Sprite):
                         self.hitbox.bottom = sprite.hitbox.top
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+
+        for sprite in self.pickupSprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                for uiElem in self.playerUiSprites:
+                    if isinstance(uiElem, UiOverlay.InputOverlay):
+                        uiElem.kill()
+                UiOverlay.InputOverlay("Pick up Item", self.playerUiSprites)
+                break
+            else:
+                for uiElem in self.playerUiSprites:
+                    if isinstance(uiElem, UiOverlay.InputOverlay):
+                        uiElem.kill()
 
     def update(self):
         self.input()
