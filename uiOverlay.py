@@ -37,7 +37,7 @@ class UiOverlay():
         def __init__(self, item, group):
             super().__init__(group)
 
-            self.itemList .append(self)
+            self.itemList.append(self)
 
             self.prevTick = pg.time.get_ticks()
             self.fullTimer = 1000
@@ -52,7 +52,7 @@ class UiOverlay():
             half_height = display_surface.get_size()[1] // 2
 
             self.image = pg.image.load('assets/Item_Add_Overlay.png').convert_alpha()
-            self.rect = self.image.get_rect(topleft = (width-288, half_height))
+            self.rect = self.image.get_rect(topleft = (width-288, half_height-(len(self.itemList)*42)))
 
             font = pg.font.Font(None, 30)
 

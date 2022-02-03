@@ -7,11 +7,9 @@ from maps import *
 
 class Game():
     def __init__(self):
-        pg.init()
         self.screen = pg.display.set_mode((1280,720))
         pg.display.set_caption('Game about a bunny')
         self.clock = pg.time.Clock()
-
         self.level = levels.Level(maps['TEST_MAP'], self)
 
     def run(self):

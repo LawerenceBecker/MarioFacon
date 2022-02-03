@@ -12,6 +12,7 @@ class Level():
     def __init__(self, map, game):
 
         self.game = game
+        self.player = None
 
         self.display_surface = pg.display.get_surface()
 
@@ -20,7 +21,7 @@ class Level():
         self.objectSprites = pg.sprite.Group()
         self.playerUiSprites = pg.sprite.Group()
         self.transSprites = pg.sprite.Group()
-        
+
         self.northTran = map[0][0]
         self.eastTran = map[0][1]
         self.southTran = map[0][2]
@@ -39,15 +40,17 @@ class Level():
                     Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence')
                 elif col == 'b':
                     Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence', "break")
-                elif col == 'p':
-                    self.player = Player(x, y, [self.sprites], self.objectSprites, self.pickupSprites, self.playerUiSprites, self.transSprites)
+                elif col == 'p'and self.player == None:
+                    self.player = Player(x, y, [self.sprites], self.objectSprites, self.pickupSprites, self.playerUiSprites, self.transSprites, self)
                 elif col == 'S':
                     PickUpItem(x, y, [self.sprites,self.pickupSprites], 'Strawberry', 1)
                 elif col == 'C':
                     PickUpItem(x, y, [self.sprites,self.pickupSprites], 'Carrot', 1)
 
-                if col == 'e':
+                elif col == 'e':
                     TransTile(x, y, [self.transSprites, self.sprites], 'e')
+                elif col == 'w':
+                    TransTile(x, y, [self.transSprites, self.sprites], 'w')
                     
                     
 

@@ -5,6 +5,7 @@ class TransTile(pg.sprite.Sprite):
         super().__init__(groups)
 
         self.image = pg.Surface((64,64))
+        self.image.fill('#9edb64')
         self.rect = self.image.get_rect(topleft = (x*64,y*64))
 
         self.hitbox = self.rect
