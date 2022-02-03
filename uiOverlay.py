@@ -10,15 +10,26 @@ class UiOverlay():
             x = display_surface.get_size()[0] // 2
             y = display_surface.get_size()[1] // 2
             
-            self.image = pg.Surface((170,24))
-            self.rect = self.image.get_rect(topleft = (x+16, y-36))
+            self.image = pg.image.load('assets/Prompt_Overlay.png')
+            self.rect = self.image.get_rect(topleft = (x+24, y-28))
 
-            font = pg.font.Font(None, 30)
-            promptText = font.render(f'E   {prompt}' , True , (255,255,255))
+            font = pg.font.Font(None, 24)
+            promptText = font.render(f'E     {prompt}' , True , (0,0,0)) # 13 Es
 
-            self.image.blit(promptText, [4, 2])
+            self.image.blit(promptText, [5, 5])
 
+            self.animPos = [-2, 2]
+            self.animIndex = 0
+            self.animTimer = 400
+            self.prevTick = pg.time.get_ticks()
 
+        def update(self):
+            if pg.time.get_ticks() - self.prevTick >= self.animTimer:
+                self.rect.y += self.animPos[self.animIndex]
+                self.animIndex += 1
+                if self.animIndex >= 2:
+                    self.animIndex = 0
+                self.prevTick = pg.time.get_ticks()
 
     class GainItem(pg.sprite.Sprite):
         itemList = []
@@ -36,20 +47,20 @@ class UiOverlay():
             self.animTimer = 100
 
             display_surface = pg.display.get_surface()
-            width = display_surface.get_size()[0] - (len(item.name)* 24) - 48
+            width = display_surface.get_size()[0]
 
-            half_height = display_surface.get_size()[1] //2
+            half_height = display_surface.get_size()[1] // 2
 
             self.image = pg.image.load('assets/Item_Add_Overlay.png').convert_alpha()
-            self.rect = self.image.get_rect(topleft = (width,half_height-(len(self.itemList )*42)))
+            self.rect = self.image.get_rect(topleft = (width-288, half_height))
 
             font = pg.font.Font(None, 30)
 
             itemImage = item.icon
-            itemNameText = font.render(f'You got 1x {item.name}' , True , (255,255,255))
+            itemNameText = font.render(f'You got 1x {item.name}' , True , (0,0,0))
 
-            self.image.blit(itemImage, [0, 2])
-            self.image.blit(itemNameText, [38, 12])
+            self.image.blit(itemImage, [3, 3])
+            self.image.blit(itemNameText, [56,12])
             
         def update(self):
             if self.image.get_alpha() <= 0:

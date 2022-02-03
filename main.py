@@ -1,7 +1,9 @@
 import pygame as pg
 import sys
 
-from levels import levelTest
+import levels
+from maps import *
+
 
 class Game():
     def __init__(self):
@@ -10,7 +12,7 @@ class Game():
         pg.display.set_caption('Game about a bunny')
         self.clock = pg.time.Clock()
 
-        self.level = levelTest.Level()
+        self.level = levels.Level(maps['TEST_MAP'], self)
 
     def run(self):
         while True:
@@ -19,11 +21,12 @@ class Game():
                     pg.QUIT
                     sys.exit()
 
-            self.screen.fill('black')
+            self.screen.fill('#9edb64')
+            
             self.level.run()
             pg.display.update()
             self.clock.tick(60)
 
 if __name__ == '__main__':
     game = Game()
-    game. run()
+    game.run()
