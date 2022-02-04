@@ -1,12 +1,14 @@
 import pygame as pg
 
 class PickUpItem(pg.sprite.Sprite):
-    def __init__(self, x, y, groups, name, amount):
+    def __init__(self, x, y, groups, name, itemId):
         super().__init__(groups)
         self.icon = pg.image.load(f'assets/{name}.png').convert_alpha()
         self.image = pg.image.load('assets/items/Item_Sprite_0.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = ((x*64)+16, (y*64)+16))
         self.hitbox = self.rect.inflate(-6, -22)
+
+        self.itemId = itemId
 
         self.animPos = [2,-2,-2,2]
         self.animTimer = 350
@@ -15,7 +17,6 @@ class PickUpItem(pg.sprite.Sprite):
         self.animIndex = 0
 
         self.name = name
-        self.amount = amount
 
     def find_placement(self):
 

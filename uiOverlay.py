@@ -64,6 +64,7 @@ class UiOverlay():
             
         def update(self):
             if self.image.get_alpha() <= 0:
+                self.itemList.remove(self)
                 self.kill()
             
             if self.fade == True:

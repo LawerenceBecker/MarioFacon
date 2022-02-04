@@ -8,9 +8,9 @@ from maps import *
 class Game():
     def __init__(self):
         self.screen = pg.display.set_mode((1280,720))
-        pg.display.set_caption('Game about a bunny')
+        pg.display.set_caption('Game ddddaabout a bunny')
         self.clock = pg.time.Clock()
-        self.level = levels.Level(maps['TEST_MAP'], self)
+        self.level = levels.Level(maps['escape_pen'], self)
 
     def run(self):
         while True:

@@ -62,13 +62,14 @@ class Player(pg.sprite.Sprite):
             for item in self.pickupSprites:
                 if item.hitbox.colliderect(self.hitbox):
                     UiOverlay.GainItem(item, self.playerUiSprites)
+                    self.game.level.current_map[2][item.itemId][1] = True
                     found = False
                     for items in self.inventory:
                         if items[0] == item.name:
                             items[1] += 1
                             found  = True
                     if found == False:
-                        self.inventory.append([item.name, item.amount])
+                        self.inventory.append([item.name, 1])
                     item.kill()
 
                     self.overlayActive = False
@@ -120,29 +121,21 @@ class Player(pg.sprite.Sprite):
                 self.transSprites.empty()
 
                 if transitions.transType == 'n':
+
                     self.game.level.create_map(maps[self.game.level.northTran])
-                    self.game.level.eastTran = maps[self.game.level.northTran][0][1]
-                    self.game.level.southTran = maps[self.game.level.northTran][0][2]
-                    self.game.level.westTran = maps[self.game.level.northTran][0][3]
-                    self.game.level.northTran = maps[self.game.level.northTran][0][0]
+
                 elif transitions.transType == 'e':
+
                     self.game.level.create_map(maps[self.game.level.eastTran])
-                    self.game.level.northTran = maps[self.game.level.eastTran][0][0]
-                    self.game.level.southTran = maps[self.game.level.eastTran][0][2]
-                    self.game.level.westTran = maps[self.game.level.eastTran][0][3]
-                    self.game.level.eastTran = maps[self.game.level.eastTran][0][1]
+
                 elif transitions.transType == 's':
+
                     self.game.level.create_map(maps[self.game.level.southTran])
-                    self.game.level.northTran = maps[self.game.level.southTran][0][0]
-                    self.game.level.eastTran = maps[self.game.level.southTran][0][1]
-                    self.game.level.westTran = maps[self.game.level.southTran][0][3]
-                    self.game.level.southTran = maps[self.game.level.southTran][0][2]
+
                 elif transitions.transType == 'w':
+
                     self.game.level.create_map(maps[self.game.level.westTran])
-                    self.game.level.northTran = maps[self.game.level.westTran][0][0]
-                    self.game.level.eastTran = maps[self.game.level.westTran][0][1]
-                    self.game.level.southTran = maps[self.game.level.westTran][0][2]
-                    self.game.level.westTran = maps[self.game.level.westTran][0][3]
+
                 for transitions in self.transSprites:
                     if transitions.transType == 'n':
                         self.hitbox.center = transitions.rect.center

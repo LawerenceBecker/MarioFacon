@@ -22,15 +22,17 @@ class Level():
         self.playerUiSprites = pg.sprite.Group()
         self.transSprites = pg.sprite.Group()
 
-        self.northTran = map[0][0]
-        self.eastTran = map[0][1]
-        self.southTran = map[0][2]
-        self.westTran = map[0][3]
-        
         self.create_map(map)
 
 
     def create_map(self, map):
+        self.current_map = map
+
+        self.northTran = map[0][0]
+        self.eastTran = map[0][1]
+        self.southTran = map[0][2]
+        self.westTran = map[0][3]
+
         for row_index, row in enumerate(map[1]):
             for col_index, col in enumerate(row):
                 x = col_index
@@ -42,16 +44,15 @@ class Level():
                     Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence', "break")
                 elif col == 'p'and self.player == None:
                     self.player = Player(x, y, [self.sprites], self.objectSprites, self.pickupSprites, self.playerUiSprites, self.transSprites, self)
-                elif col == 'S':
-                    PickUpItem(x, y, [self.sprites,self.pickupSprites], 'Strawberry', 1)
-                elif col == 'C':
-                    PickUpItem(x, y, [self.sprites,self.pickupSprites], 'Carrot', 1)
-
                 elif col == 'e':
                     TransTile(x, y, [self.transSprites, self.sprites], 'e')
                 elif col == 'w':
                     TransTile(x, y, [self.transSprites, self.sprites], 'w')
-                    
+                elif col == '0' or col == '1' or col == '2' or col == '3' or col == '4' or col == '5' or col == '6' or col == '7' or col == '8' or col == '9':
+                    if map[2]:
+                        if map[2][col][1] == False:
+                            PickUpItem(x, y, [self.sprites,self.pickupSprites], map[2][col][0], col)
+                        
                     
 
     def run(self):
