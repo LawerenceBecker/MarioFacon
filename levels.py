@@ -6,6 +6,7 @@ from transTile import TransTile
 from maps import *
 
 from debug import debug
+from uiOverlay import UiOverlay
 
 
 class Level():
@@ -52,6 +53,14 @@ class Level():
                     if map[2]:
                         if map[2][col][1] == False:
                             PickUpItem(x, y, [self.sprites,self.pickupSprites], map[2][col][0], col)
+
+        
+        if map[3]:
+            for event in map[3]:
+                if event == "Start":
+                    print(map[3][event][0])
+                    if map[3][event][0][0] == 'ScreenText':
+                        UiOverlay.ScreenText(map[3][event][0][1], self.playerUiSprites)
                         
                     
 

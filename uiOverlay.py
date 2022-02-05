@@ -2,6 +2,26 @@ import pygame as pg
 
 class UiOverlay():
 
+    class ScreenText(pg.sprite.Sprite):
+        def __init__(self, text, groups):
+            super().__init__(groups)
+            self.image = pg.display.get_surface()
+
+            self.font = pg.font.Font(None, 128)
+
+            self.text_surf = self.font.render(text, False, (0,0,0))
+            half_text_width = self.text_surf.get_width() // 2
+            half_text_height = self.text_surf.get_height() // 2
+
+            half_screen_width = self.image.get_size()[0] // 2
+            half_screen_height = self.image.get_size()[1] // 2
+
+            x = half_screen_width - half_text_width
+            y = half_screen_height - half_text_height
+
+            self.rect = self.image.get_rect(topleft = (x,y))
+
+            self.image.blit(self.image, [x,y])
     class InputOverlay(pg.sprite.Sprite):
         def __init__(self, prompt, group):
             super().__init__(group)
@@ -14,7 +34,7 @@ class UiOverlay():
             self.rect = self.image.get_rect(topleft = (x+24, y-28))
 
             font = pg.font.Font(None, 24)
-            promptText = font.render(f'E     {prompt}' , True , (0,0,0)) # 13 Es
+            promptText = font.render(f'E     {prompt}' , False , (0,0,0)) # 13 Es
 
             self.image.blit(promptText, [5, 5])
 
@@ -57,7 +77,7 @@ class UiOverlay():
             font = pg.font.Font(None, 30)
 
             itemImage = item.icon
-            itemNameText = font.render(f'You got 1x {item.name}' , True , (0,0,0))
+            itemNameText = font.render(f'You got 1x {item.name}' , False , (0,0,0))
 
             self.image.blit(itemImage, [3, 3])
             self.image.blit(itemNameText, [56,12])

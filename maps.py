@@ -1,3 +1,17 @@
+### Events
+## Start
+# Event that play once when entering the room for the fist time
+# [['MethodName', [kargs]], BennTriggered]
+
+## E
+# 1st step on event
+## e
+# 2nd step on event
+## T
+# 1st trigger event
+## t
+# 2nd trigger event
+
 maps = {
     'TEST_MAP': [
         [None, 'test_map', None, None],
@@ -12,7 +26,8 @@ maps = {
             "1": ["Strawberry", False], 
             "2": ["Carrot", False],
             "3": ["Strawberry", False], 
-            "4": ["Carrot", False]}
+            "4": ["Carrot", False]
+        },
     ],
 
     'test_map': [
@@ -43,7 +58,10 @@ maps = {
         {
             '0': ['Carrot', False],
             '1': ['Strawberry', False],
-        }
+        },
+        {
+            "Start": [['ScreenText', 'Escape the pen'], False],
+        },
     ],
 
     'combat_tut': [
