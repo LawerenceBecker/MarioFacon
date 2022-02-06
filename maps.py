@@ -3,48 +3,22 @@
 # Event that play once when entering the room for the fist time
 # [['MethodName', [kargs]], BennTriggered]
 
-## E
+## S
 # 1st step on event
-## e
+## z
 # 2nd step on event
 ## T
 # 1st trigger event
-## t
+## h
 # 2nd trigger event
 
+from eventTile import EventTile
+
 maps = {
-    'TEST_MAP': [
-        [None, 'test_map', None, None],
-        [
-            ['f','f','f','f','f','f','f',' ',' '],
-            ['f',' ','1',' ',' ','2','f','f','f'],
-            ['f',' ',' ','p',' ',' ','b',' ','e'],
-            ['f','3',' ',' ',' ','4','f','f','f'],
-            ['f','f','f','f','f','f','f',' ',' '],
-        ],
-        {
-            "1": ["Strawberry", False], 
-            "2": ["Carrot", False],
-            "3": ["Strawberry", False], 
-            "4": ["Carrot", False]
-        },
-    ],
 
-    'test_map': [
-        [None, None, None, 'TEST_MAP'],
-        [
-            [' ','f','f','f','f'],
-            ['f','f',' ',' ','f'],
-            ['w',' ','p',' ','f'],
-            ['f','f',' ',' ','f'],
-            [' ','f','f','f','f'],
-        ],
-        {}
-    ],
-
-    'escape_pen': [
-        [None, 'combat_tut', None, None],
-        [
+    'escape_pen': {
+        "Transitions": [None, 'combat_tut', None, None],
+        "MapLayout": [
             ['f','f','f','f','f','f','f','f',' ',' '],
             ['f',' ',' ','b',' ',' ','0','f',' ',' '],
             ['f','1',' ','f',' ',' ',' ','f',' ',' '],
@@ -55,30 +29,34 @@ maps = {
             ['f',' ',' ',' ',' ',' ',' ','f',' ',' '],
             ['f','f','f','f','f','f','f','f',' ',' '],
         ],
-        {
+        "Items": {
             '0': ['Carrot', False],
             '1': ['Strawberry', False],
         },
-        {
+        "Events": {
             "Start": [['ScreenText', 'Escape the pen'], False],
         },
-    ],
+    },
 
-    'combat_tut': [
-        [None, None, None, 'escape_pen'],
-        [
+    'combat_tut': {
+        "Transitions": [None, None, None, 'escape_pen'],
+        "MapLayout": [
             [' ',' ',' ',' ','f','f','f','f','f','f',],
             [' ',' ',' ',' ','f',' ',' ',' ','0','f',],
             ['f','f','f','f','f',' ',' ',' ',' ','f',],
-            ['w',' ',' ',' ',' ',' ',' ',' ',' ','f',],
+            ['w',' ',' ',' ',' ','S',' ',' ',' ','f',],
             ['f','f','f','f','f',' ',' ',' ',' ','f',],
             [' ',' ',' ',' ','f',' ',' ',' ',' ','f',],
             [' ',' ',' ',' ','f','f','f','f',' ','f',],
             [' ',' ',' ',' ',' ',' ',' ','f',' ','f',],
             [' ',' ',' ',' ',' ',' ',' ','f','s','f',],
         ],
-        {
+        "Items": {
             '0': ['Carrot', False],
+        },
+        "Events": {
+            'S': [[EventTile.combat_Tut, None], False]
         }
-    ]
+    },
+
 }

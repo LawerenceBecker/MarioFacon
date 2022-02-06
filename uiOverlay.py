@@ -5,23 +5,34 @@ class UiOverlay():
     class ScreenText(pg.sprite.Sprite):
         def __init__(self, text, groups):
             super().__init__(groups)
-            self.image = pg.display.get_surface()
+            display_surface = pg.display.get_surface()
 
+            # Grahpic setup
             self.font = pg.font.Font(None, 128)
 
-            self.text_surf = self.font.render(text, False, (0,0,0))
-            half_text_width = self.text_surf.get_width() // 2
-            half_text_height = self.text_surf.get_height() // 2
+            self.prevTick = pg.time.get_ticks()
+            self.animTimer = 1000
 
-            half_screen_width = self.image.get_size()[0] // 2
-            half_screen_height = self.image.get_size()[1] // 2
+            self.image = self.font.render(text, False, (0,0,0)).convert_alpha()
+
+            # Position Finding
+            half_text_width = self.image.get_width() // 2
+            half_text_height = self.image.get_height() // 2
+
+            half_screen_width = display_surface.get_size()[0] // 2
+            half_screen_height = display_surface.get_size()[1] // 2
 
             x = half_screen_width - half_text_width
             y = half_screen_height - half_text_height
 
             self.rect = self.image.get_rect(topleft = (x,y))
 
-            self.image.blit(self.image, [x,y])
+        def update(self):
+            if self.image.get_alpha() <= 0:
+                self.kill()
+            if pg.time.get_ticks() - self.prevTick >= self.animTimer:
+                self.image.set_alpha(self.image.get_alpha() - 10)
+
     class InputOverlay(pg.sprite.Sprite):
         def __init__(self, prompt, group):
             super().__init__(group)
@@ -30,6 +41,7 @@ class UiOverlay():
             x = display_surface.get_size()[0] // 2
             y = display_surface.get_size()[1] // 2
             
+            # Graphic Setup
             self.image = pg.image.load('assets/Prompt_Overlay.png')
             self.rect = self.image.get_rect(topleft = (x+24, y-28))
 
@@ -38,6 +50,7 @@ class UiOverlay():
 
             self.image.blit(promptText, [5, 5])
 
+            # Animation Setup
             self.animPos = [-2, 2]
             self.animIndex = 0
             self.animTimer = 400
@@ -52,27 +65,26 @@ class UiOverlay():
                 self.prevTick = pg.time.get_ticks()
 
     class GainItem(pg.sprite.Sprite):
-        itemList = []
 
         def __init__(self, item, group):
             super().__init__(group)
 
-            self.itemList.append(self)
-
+            # Animation Setup
+            self.animTimer = 10
             self.prevTick = pg.time.get_ticks()
             self.fullTimer = 1000
 
-            self.fade = False
+            self.fadeIn =  True
+            self.fadeOut = False
 
-            self.animTimer = 100
-
+            # Graphic Setup
             display_surface = pg.display.get_surface()
-            width = display_surface.get_size()[0]
+            self.width = display_surface.get_size()[0]
 
             half_height = display_surface.get_size()[1] // 2
 
             self.image = pg.image.load('assets/Item_Add_Overlay.png').convert_alpha()
-            self.rect = self.image.get_rect(topleft = (width-288, half_height-(len(self.itemList)*42)))
+            self.rect = self.image.get_rect(topleft = (self.width, half_height))
 
             font = pg.font.Font(None, 30)
 
@@ -83,18 +95,27 @@ class UiOverlay():
             self.image.blit(itemNameText, [56,12])
             
         def update(self):
-            if self.image.get_alpha() <= 0:
-                self.itemList.remove(self)
-                self.kill()
-            
-            if self.fade == True:
+            if self.fadeIn:
                 if pg.time.get_ticks() - self.prevTick >= self.animTimer:
+                    if self.rect.x <= self.width-self.image.get_width():
+                        self.rect.x = self.width-self.image.get_width()
+                        self.fadeIn = False
+                    else:
+                        self.rect.x -= 12
+                    self.prevTick =  pg.time.get_ticks()
+
+            else:
+                if self.image.get_alpha() <= 0:
+                    self.kill()
+                
+                if self.fadeOut:
+                    if pg.time.get_ticks() - self.prevTick >= self.animTimer:
+                        self.image.set_alpha(self.image.get_alpha() - 5)
+                        self.rect.y += 2
+
+                if pg.time.get_ticks() - self.prevTick >= self.fullTimer and self.fadeOut == False:
+                    self.fadeOut = True
+                    self.prevTick = pg.time.get_ticks()
+
                     self.image.set_alpha(self.image.get_alpha() - 5)
                     self.rect.y += 2
-
-            if pg.time.get_ticks() - self.prevTick >= self.fullTimer:
-                self.fade = True
-                self.prevTick = pg.time.get_ticks()
-
-                self.image.set_alpha(self.image.get_alpha() - 5)
-                self.rect.y += 2

@@ -1,21 +1,20 @@
 import pygame as pg
 
 from uiOverlay import UiOverlay
+from eventTile import EventTile
 from maps import *
 
 class Player(pg.sprite.Sprite):
     def __init__(self, x, y, groups, spriteObjects, pickupSprites, playerUiSprites, transSprites, l):
         super().__init__(groups)
 
+        # Game object
         self.game = l.game
 
+        # Graphic Setup
         self.image = pg.image.load('assets/Player.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = (x*64,y*64))
         self.hitbox = pg.Rect(self.rect.x+4, self.rect.bottom-42, 52, 22)
-
-        self.overlayActive = False
-
-        self.state = 'idle'
 
         self.aniamtions = {'idle': ['assets/player/idle/Player_idle_0.png','assets/player/idle/Player_idle_1.png']}
         self.animTimer = 300
@@ -23,6 +22,10 @@ class Player(pg.sprite.Sprite):
 
         self.animIndex = 0
 
+        # State Manager
+        self.state = 'idle'
+
+        # Sprite Groups
         self.sprites = groups[0]
         self.spriteObjects = spriteObjects
         self.pickupSprites = pickupSprites
@@ -30,9 +33,12 @@ class Player(pg.sprite.Sprite):
         self.breakableObj = None
 
         self.playerUiSprites = playerUiSprites
+
+        # Movement
         self.direction = pg.math.Vector2()
         self.speed = 5
 
+        #Inventory
         self.inventory = []
 
     def find_placement(self):
@@ -41,44 +47,50 @@ class Player(pg.sprite.Sprite):
     def input(self):
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_w] or keys[pg.K_UP]:
-            self.direction.y = -1
-        elif keys[pg.K_s] or keys[pg.K_DOWN]:
-            self.direction.y = 1
-        else:
-            self.direction.y = 0
+        if keys[pg.K_w] or keys[pg.K_UP]: self.direction.y = -1
 
-        if keys[pg.K_a] or keys[pg.K_LEFT]:
-            self.direction.x = -1
-        elif keys[pg.K_d] or keys[pg.K_RIGHT]:
-            self.direction.x = 1
-        else:
-            self.direction.x = 0
+        elif keys[pg.K_s] or keys[pg.K_DOWN]: self.direction.y = 1
+
+        else: self.direction.y = 0
+
+        if keys[pg.K_a] or keys[pg.K_LEFT]: self.direction.x = -1
+
+        elif keys[pg.K_d] or keys[pg.K_RIGHT]: self.direction.x = 1
+
+        else: self.direction.x = 0
     
         if keys[pg.K_TAB]:
             print(self.inventory)
 
         if keys[pg.K_e]:
-            for item in self.pickupSprites:
-                if item.hitbox.colliderect(self.hitbox):
-                    UiOverlay.GainItem(item, self.playerUiSprites)
-                    self.game.level.current_map[2][item.itemId][1] = True
-                    found = False
-                    for items in self.inventory:
-                        if items[0] == item.name:
-                            items[1] += 1
-                            found  = True
-                    if found == False:
-                        self.inventory.append([item.name, 1])
-                    item.kill()
 
-                    self.overlayActive = False
-                    for uiElem in self.playerUiSprites:
-                            if isinstance(uiElem, UiOverlay.InputOverlay):
-                                uiElem.kill()
+            self.pickup_check()
 
             if self.breakableObj:
                 self.breakableObj.kill()
+
+    def pickup_check(self):
+        for item in self.pickupSprites:
+            if item.hitbox.colliderect(self.hitbox):
+                newOverlay = UiOverlay.GainItem(item, self.playerUiSprites)
+
+                for uiElem in self.playerUiSprites:
+                    if isinstance(uiElem, UiOverlay.GainItem):
+                        if uiElem != newOverlay:
+                            uiElem.rect.y += 42
+
+                self.game.level.current_map["Items"][item.itemId][1] = True
+                owned = False
+
+                for items in self.inventory:
+                    if items[0] == item.name:
+                        items[1] += 1
+                        owned  = True
+
+                if owned == False:
+                    self.inventory.append([item.name, 1])
+
+                item.kill()
 
     def move(self, speed):
         if self.direction.magnitude() != 0:
@@ -88,6 +100,9 @@ class Player(pg.sprite.Sprite):
         self.collision("horizontal")
         self.hitbox.y += self.direction.y * speed
         self.collision("vertical")
+
+        self.check_transitions()
+        self.check_overlay()
 
         self.rect.center = self.hitbox.center
     
@@ -111,47 +126,15 @@ class Player(pg.sprite.Sprite):
                         
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
-                        
 
-        for transitions in self.transSprites:
-            if transitions.hitbox.colliderect(self.hitbox):
-                self.sprites.empty()
-                self.spriteObjects.empty()
-                self.pickupSprites.empty()
-                self.transSprites.empty()
-
-                if transitions.transType == 'n':
-
-                    self.game.level.create_map(maps[self.game.level.northTran])
-
-                elif transitions.transType == 'e':
-
-                    self.game.level.create_map(maps[self.game.level.eastTran])
-
-                elif transitions.transType == 's':
-
-                    self.game.level.create_map(maps[self.game.level.southTran])
-
-                elif transitions.transType == 'w':
-
-                    self.game.level.create_map(maps[self.game.level.westTran])
-
-                for transitions in self.transSprites:
-                    if transitions.transType == 'n':
-                        self.hitbox.center = transitions.rect.center
-                        self.hitbox.y -= 64
-                    elif transitions.transType == 'e':
-                        self.hitbox.center = transitions.rect.center
-                        self.hitbox.x -= 64
-                    elif transitions.transType == 's':
-                        self.hitbox.center = transitions.rect.center
-                        self.hitbox.y += 64
-                    elif transitions.transType == 'w':
-                        self.hitbox.center = transitions.rect.center
-                        self.hitbox.x += 64
-                self.sprites.add(self)
-                
-                    
+    def check_overlay(self):
+        for sprite in self.pickupSprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                for uiElem in self.playerUiSprites:
+                    if isinstance(uiElem, UiOverlay.InputOverlay):
+                        return
+                UiOverlay.InputOverlay("Pick up Item", self.playerUiSprites)
+                return
 
         for sprite in self.spriteObjects:
                 if sprite.rect.colliderect(self.hitbox):
@@ -163,19 +146,42 @@ class Player(pg.sprite.Sprite):
                         UiOverlay.InputOverlay("Interact with Wall", self.playerUiSprites)
                         return
         self.breakableObj = None
-        
 
-        for sprite in self.pickupSprites:
-            if sprite.hitbox.colliderect(self.hitbox):
-                for uiElem in self.playerUiSprites:
-                    if isinstance(uiElem, UiOverlay.InputOverlay):
-                        return
-                UiOverlay.InputOverlay("Pick up Item", self.playerUiSprites)
-                return
+        self.destroy_overlay()
 
+    def destroy_overlay(self):
         for uiElem in self.playerUiSprites:
             if isinstance(uiElem, UiOverlay.InputOverlay):
-                uiElem.kill()
+                uiElem.kill()  
+
+    def check_transitions(self):
+
+        for transitions in self.transSprites:
+            if transitions.hitbox.colliderect(self.hitbox):
+                self.sprites.empty()
+                self.spriteObjects.empty()
+                self.pickupSprites.empty()
+                self.transSprites.empty()
+
+                if transitions.transType == 'n':  self.game.level.create_map(maps[self.game.level.northTran])
+
+                elif transitions.transType == 'e': self.game.level.create_map(maps[self.game.level.eastTran])
+
+                elif transitions.transType == 's':  self.game.level.create_map(maps[self.game.level.southTran])
+
+                elif transitions.transType == 'w': self.game.level.create_map(maps[self.game.level.westTran])
+
+                for transitions in self.transSprites:
+                    self.hitbox.center = transitions.rect.center
+
+                    if transitions.transType == 'n': self.hitbox.y -= 64
+
+                    elif transitions.transType == 'e': self.hitbox.x -= 64
+
+                    elif transitions.transType == 's': self.hitbox.y += 64
+
+                    elif transitions.transType == 'w': self.hitbox.x += 64
+                self.sprites.add(self)
 
     def update(self):
         self.input()

@@ -3,6 +3,7 @@ from player import Player
 from tile import Tile
 from pickUpItems import PickUpItem
 from transTile import TransTile
+from eventTile import EventTile
 from maps import *
 
 from debug import debug
@@ -29,38 +30,50 @@ class Level():
     def create_map(self, map):
         self.current_map = map
 
-        self.northTran = map[0][0]
-        self.eastTran = map[0][1]
-        self.southTran = map[0][2]
-        self.westTran = map[0][3]
+        self.northTran = map["Transitions"][0]
+        self.eastTran = map["Transitions"][1]
+        self.southTran = map["Transitions"][2]
+        self.westTran = map["Transitions"][3]
 
-        for row_index, row in enumerate(map[1]):
+        for row_index, row in enumerate(map["MapLayout"]):
             for col_index, col in enumerate(row):
                 x = col_index
                 y = row_index
                 if col == 'f':
-                    
                     Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence')
+
                 elif col == 'b':
-                    Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence', "break")
+                    Tile(x, y, [self.sprites,self.objectSprites], 'Picket_Fence_Broken', "break")
+
                 elif col == 'p'and self.player == None:
-                    self.player = Player(x, y, [self.sprites], self.objectSprites, self.pickupSprites, self.playerUiSprites, self.transSprites, self)
+                    self.player = Player(
+                                    x, y, 
+                                    [self.sprites], 
+                                    self.objectSprites, 
+                                    self.pickupSprites, 
+                                    self.playerUiSprites, 
+                                    self.transSprites, 
+                                    self)
+
                 elif col == 'e':
                     TransTile(x, y, [self.transSprites, self.sprites], 'e')
+
                 elif col == 'w':
                     TransTile(x, y, [self.transSprites, self.sprites], 'w')
+                    
                 elif col == '0' or col == '1' or col == '2' or col == '3' or col == '4' or col == '5' or col == '6' or col == '7' or col == '8' or col == '9':
-                    if map[2]:
-                        if map[2][col][1] == False:
-                            PickUpItem(x, y, [self.sprites,self.pickupSprites], map[2][col][0], col)
+                    if map["Items"]:
+                        if map["Items"][col][1] == False:
+                            PickUpItem(x, y, [self.sprites,self.pickupSprites], map["Items"][col][0], col)
 
         
-        if map[3]:
-            for event in map[3]:
+        if map["Events"]:
+            for event in map["Events"]:
                 if event == "Start":
-                    print(map[3][event][0])
-                    if map[3][event][0][0] == 'ScreenText':
-                        UiOverlay.ScreenText(map[3][event][0][1], self.playerUiSprites)
+                    if map["Events"][event][0][0] == 'ScreenText' and map["Events"][event][1] == False:
+                        UiOverlay.ScreenText(map["Events"][event][0][1], self.playerUiSprites)
+                        map["Events"][event][1] = True
+
                         
                     
 
